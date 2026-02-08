@@ -54,9 +54,15 @@
     position: absolute;
     bottom: 10px;
     font-size: 1rem;
-    /* color: red; */
     text-align: center;
     width: 100%;
+  }
+
+  img {
+    max-width: 90%;
+    height: auto;
+    border-radius: 10px;
+    margin-top: 20px;
   }
 </style>
 </head>
@@ -74,24 +80,19 @@
   const noBtn = document.getElementById('noBtn');
   const yesBtn = document.getElementById('yesBtn');
 
-  // المتغيرات السابقة
   let prevX = 0;
   let prevY = 0;
   const minDistance = 50; // أقل مسافة بين القيمة الجديدة والقديمة
 
+  let hoverCount = 0;      // عداد المرور على No
+  let imageDisplayed = false; // لتجنب ظهور الصورة أكثر من مرة
+
   function getRandomPosition() {
       let x, y;
-      do {
-          x = Math.random() * 300 - 150;
-      } while (Math.abs(x - prevX) < minDistance);
-
-      do {
-          y = Math.random() * 200 - 100;
-      } while (Math.abs(y - prevY) < minDistance);
-
+      do { x = Math.random() * 300 - 150; } while (Math.abs(x - prevX) < minDistance);
+      do { y = Math.random() * 200 - 100; } while (Math.abs(y - prevY) < minDistance);
       prevX = x;
       prevY = y;
-
       return { x, y };
   }
 
@@ -99,13 +100,30 @@
   noBtn.addEventListener('mouseover', () => {
     const { x, y } = getRandomPosition();
     noBtn.style.transform = `translate(${x}px, ${y}px)`;
+
+    // بعد 5 مرات hover على No
+    if (!imageDisplayed) {
+      hoverCount++;
+      if (hoverCount >= 5) {
+        imageDisplayed = true;
+
+        // إزالة الرسالة والأزرار
+        document.querySelector('p').style.display = 'none';
+        document.querySelector('.button-container').style.display = 'none';
+
+        // إضافة الصورة
+        const img = document.createElement('img');
+        img.src = '7h4msr.jpg'; // ضع رابط الصورة هنا
+        document.body.appendChild(img);
+      }
+    }
   });
 
   // عند الضغط على "Yes"
   yesBtn.addEventListener('click', () => {
     document.body.innerHTML = ''; // إزالة كل المحتوى
     const img = document.createElement('img');
-    img.src = 'marry-me-cat.png'; // ضع رابط الصورة اللي تحبها
+    img.src = 'marry-me-cat.png'; // ضع رابط الصورة هنا
     img.style.maxWidth = '90%';
     img.style.height = 'auto';
     img.style.borderRadius = '10px';
@@ -118,7 +136,6 @@
     footer.style.bottom = '10px';
     footer.style.width = '100%';
     footer.style.textAlign = 'center';
-    // footer.style.color = 'red';
     document.body.appendChild(footer);
   });
 </script>
