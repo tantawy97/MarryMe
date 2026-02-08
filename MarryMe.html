@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Will You Marry Me?</title>
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+    background: #f0f0f0;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    position: relative;
+  }
+
+  p {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .button-container {
+    display: flex;
+    gap: 40px;
+    position: relative;
+  }
+
+  .btn {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    border: none;
+    cursor: pointer;
+    margin: 10px;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+  }
+
+  #yesBtn {
+    background-color: #e91e63; /* rose color */
+    color: white;
+  }
+
+  #noBtn {
+    background-color: black;
+    color: white;
+    position: relative;
+  }
+
+  footer {
+    position: absolute;
+    bottom: 10px;
+    font-size: 1rem;
+    /* color: red; */
+    text-align: center;
+    width: 100%;
+  }
+</style>
+</head>
+<body>
+
+<p>Will you marry me?</p>
+<div class="button-container">
+  <button id="yesBtn" class="btn">Yes</button>
+  <button id="noBtn" class="btn">No</button>
+</div>
+
+<footer>by Abdalla Tantawy ❤️</footer>
+
+<script>
+  const noBtn = document.getElementById('noBtn');
+  const yesBtn = document.getElementById('yesBtn');
+
+  // المتغيرات السابقة
+  let prevX = 0;
+  let prevY = 0;
+  const minDistance = 50; // أقل مسافة بين القيمة الجديدة والقديمة
+
+  function getRandomPosition() {
+      let x, y;
+      do {
+          x = Math.random() * 300 - 150;
+      } while (Math.abs(x - prevX) < minDistance);
+
+      do {
+          y = Math.random() * 200 - 100;
+      } while (Math.abs(y - prevY) < minDistance);
+
+      prevX = x;
+      prevY = y;
+
+      return { x, y };
+  }
+
+  // حركة زر "No" عند المرور عليه بالماوس
+  noBtn.addEventListener('mouseover', () => {
+    const { x, y } = getRandomPosition();
+    noBtn.style.transform = `translate(${x}px, ${y}px)`;
+  });
+
+  // عند الضغط على "Yes"
+  yesBtn.addEventListener('click', () => {
+    document.body.innerHTML = ''; // إزالة كل المحتوى
+    const img = document.createElement('img');
+    img.src = 'marry-me-cat.png'; // ضع رابط الصورة اللي تحبها
+    img.style.maxWidth = '90%';
+    img.style.height = 'auto';
+    img.style.borderRadius = '10px';
+    document.body.appendChild(img);
+
+    // إعادة إضافة الفوتر بعد الضغط على Yes
+    const footer = document.createElement('footer');
+    footer.textContent = 'by Abdalla Tantawy ❤️';
+    footer.style.position = 'absolute';
+    footer.style.bottom = '10px';
+    footer.style.width = '100%';
+    footer.style.textAlign = 'center';
+    // footer.style.color = 'red';
+    document.body.appendChild(footer);
+  });
+</script>
+
+</body>
+</html>
