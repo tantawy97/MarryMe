@@ -4,141 +4,424 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Will You Marry Me?</title>
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    flex-direction: column;
-    background: #f0f0f0;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    position: relative;
-  }
+  * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  p {
-    font-size: 2rem;
-    margin-bottom: 30px;
-    text-align: center;
-  }
+body {
+  background: #0a0a0a;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  color: #fff;
+}
 
-  .button-container {
-    display: flex;
-    gap: 40px;
-    position: relative;
-  }
+.player-card {
+  width: 800px;
+  background: #1a1a1a;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
 
-  .btn {
-    padding: 15px 30px;
-    font-size: 1.2rem;
-    border: none;
-    cursor: pointer;
-    margin: 10px;
-    transition: all 0.3s ease;
-    border-radius: 8px;
-  }
+.video-wrapper {
+  position: relative;
+  background: #000;
+  height: 100%;
+}
 
-  #yesBtn {
-    background-color: #e91e63; /* rose color */
-    color: white;
-  }
+#player {
+  width: 100%;
+  height: calc(100% - 60px);
+  min-height: 400px;
+  pointer-events: none;
+}
 
-  #noBtn {
-    background-color: black;
-    color: white;
-    position: relative;
-  }
+.overlay-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+}
 
-  footer {
-    position: absolute;
-    bottom: 10px;
-    font-size: 1rem;
-    text-align: center;
-    width: 100%;
-  }
+.overlay-play i {
+  font-size: 36px;
+  color: #fff;
+  margin-left: 4px;
+}
 
-  img {
-    max-width: 90%;
-    height: auto;
-    border-radius: 10px;
-    margin-top: 20px;
-  }
+.overlay-play:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.controls-bar {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  background: rgba(20, 20, 20, 0.9);
+  gap: 10px;
+}
+
+.btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.time,
+.volume-container,
+.seek-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.time {
+  gap: 5px;
+}
+
+.seek-container,
+.seek-container .slider {
+  width: 100%;
+}
+
+.volume-container {
+  padding-right: 20px;
+}
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, #ffffff 0%, rgba(255, 255, 255, 0.1) 0%);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+}
+
+.control-select {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.fullscreen-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.player-card:-webkit-full-screen {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 </style>
 </head>
 <body>
 
-<p>Will you marry me?</p>
-<div class="button-container">
-  <button id="yesBtn" class="btn">Yes</button>
-  <button id="noBtn" class="btn">No</button>
+<div class="player-card">
+  <div style="padding: 10px;">
+    <p>Move this code to a local file or a platform.</p>
+    </br>
+    <p>→ CodePen Blocks YouTube autoplay (even muted).</p>
+    <p>→ CodePen Sometimes blocks YouTube JS API communication.</p>
+    </br>
+  </div>
+
+  <div class="video-wrapper">
+
+    <div class="player" id="player"></div>
+
+    <div class="overlay-play" id="overlayPlay">
+      <i class="fas fa-play"></i>
+    </div>
+
+    <div class="controls-bar">
+
+      <button id="playPauseBtn" class="btn">
+        <i class="fas fa-play"></i>
+      </button>
+
+      <div class="volume-container">
+        <button id="muteBtn" class="btn">
+          <i class="fas fa-volume-high"></i>
+        </button>
+        <input type="range" id="volumeSlider" min="0" max="100" value="100" class="slider volume" />
+      </div>
+
+      <select id="playbackSpeed" class="control-select">
+        <option value="1">1x</option>
+        <option value="1.5">1.5x</option>
+        <option value="2">2x</option>
+      </select>
+
+      <span class="time">
+        <span id="currentTime">0:00</span> /
+        <span id="duration">0:00</span>
+      </span>
+
+      <div class="seek-container">
+        <input type="range" id="seekBar" min="0" max="100" value="0" class="slider seek" />
+      </div>
+
+      <button id="fullscreenBtn" class="fullscreen-btn">
+        <i class="fas fa-expand"></i>
+      </button>
+
+    </div>
+  </div>
+
 </div>
-
-<footer>by Mohammed Shabrawy ❤️</footer>
-
 <script>
-  const noBtn = document.getElementById('noBtn');
-  const yesBtn = document.getElementById('yesBtn');
+  window.addEventListener("DOMContentLoaded", () => {
+  let player;
+  let duration = 0;
+  let lastVolume = 0;
+  let seekBar, volumeSlider;
 
-  let prevX = 0;
-  let prevY = 0;
-  const minDistance = 50; // أقل مسافة بين القيمة الجديدة والقديمة
+  // 1. Define YouTube API callback
+  window.onYouTubeIframeAPIReady = function () {
+    player = new YT.Player("player", {
+      videoId: "6JuiSF-mAVk",
+      playerVars: {
+        controls: 0,
+        modestbranding: 0,
+        rel: 0,
+        showinfo: 0,
+        autoplay: 1,
+        mute: 1,
+      },
+      events: {
+        onReady: onPlayerReady,
+        onStateChange: onPlayerStateChange,
+      },
+    });
+  };
 
-  let hoverCount = 0;      // عداد المرور على No
-  let imageDisplayed = false; // لتجنب ظهور الصورة أكثر من مرة
+  // 2. Inject YouTube API script
+  const tag = document.createElement("script");
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.head.appendChild(tag);
 
-  function getRandomPosition() {
-      let x, y;
-      do { x = Math.random() * 300 - 150; } while (Math.abs(x - prevX) < minDistance);
-      do { y = Math.random() * 200 - 100; } while (Math.abs(y - prevY) < minDistance);
-      prevX = x;
-      prevY = y;
-      return { x, y };
+  function onPlayerReady() {
+    // Fallback for browsers blocking volume methods
+    try {
+      player.setVolume(lastVolume);
+    } catch (e) {
+      console.warn("Volume API not allowed in this environment");
+    }
+
+    player.playVideo();
+
+    duration = player.getDuration();
+    document.getElementById("duration").textContent = formatTime(duration);
+
+    seekBar = document.getElementById("seekBar");
+    volumeSlider = document.getElementById("volumeSlider");
+
+    volumeSlider.value = lastVolume;
+    updateSliderFill(seekBar);
+    updateSliderFill(volumeSlider);
+
+    document
+      .getElementById("playPauseBtn")
+      .addEventListener("click", togglePlayPause);
+    document
+      .getElementById("overlayPlay")
+      .addEventListener("click", togglePlayPause);
+    document.getElementById("muteBtn").addEventListener("click", toggleMute);
+    volumeSlider.addEventListener("input", handleVolume);
+    seekBar.addEventListener("input", handleSeek);
+    document
+      .getElementById("playbackSpeed")
+      .addEventListener("change", handleSpeedChange);
+    document
+      .getElementById("fullscreenBtn")
+      .addEventListener("click", toggleFullscreen);
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === " ") togglePlayPause();
+      if (e.key === "ArrowRight")
+        player.seekTo(player.getCurrentTime() + 5, true);
+      if (e.key === "ArrowLeft")
+        player.seekTo(player.getCurrentTime() - 5, true);
+      if (e.key === "m") toggleMute.call(document.getElementById("muteBtn"));
+      if (e.key === "f") toggleFullscreen();
+    });
+
+    setInterval(updateProgress, 1000);
   }
 
-  // حركة زر "No" عند المرور عليه بالماوس
-  noBtn.addEventListener('mouseover', () => {
-    const { x, y } = getRandomPosition();
-    noBtn.style.transform = `translate(${x}px, ${y}px)`;
+  function togglePlayPause() {
+    const state = player.getPlayerState();
+    const overlay = document.getElementById("overlayPlay");
+    const btn = document.getElementById("playPauseBtn");
 
-    // بعد 5 مرات hover على No
-    if (!imageDisplayed) {
-      hoverCount++;
-      if (hoverCount >= 5) {
-        imageDisplayed = true;
-
-        // إزالة الرسالة والأزرار
-        document.querySelector('p').style.display = 'none';
-        document.querySelector('.button-container').style.display = 'none';
-
-        // إضافة الصورة
-        const img = document.createElement('img');
-        img.src = '7h4msr.jpg'; // ضع رابط الصورة هنا
-        document.body.appendChild(img);
-      }
+    if (state === YT.PlayerState.PLAYING) {
+      player.pauseVideo();
+      overlay.style.opacity = "1";
+      btn.innerHTML = '<i class="fas fa-play"></i>';
+    } else {
+      player.playVideo();
+      overlay.style.opacity = "0";
+      btn.innerHTML = '<i class="fas fa-pause"></i>';
     }
-  });
+  }
 
-  // عند الضغط على "Yes"
-  yesBtn.addEventListener('click', () => {
-    document.body.innerHTML = ''; // إزالة كل المحتوى
-    const img = document.createElement('img');
-    img.src = 'marry-me-cat.png'; // ضع رابط الصورة هنا
-    img.style.maxWidth = '90%';
-    img.style.height = 'auto';
-    img.style.borderRadius = '10px';
-    document.body.appendChild(img);
+  function toggleMute() {
+    const btn = this;
 
-    // إعادة إضافة الفوتر بعد الضغط على Yes
-    const footer = document.createElement('footer');
-    footer.textContent = 'by Mohammed Shabrawy ❤️';
-    footer.style.position = 'absolute';
-    footer.style.bottom = '10px';
-    footer.style.width = '100%';
-    footer.style.textAlign = 'center';
-    document.body.appendChild(footer);
-  });
+    try {
+      if (player.isMuted()) {
+        player.unMute();
+        btn.innerHTML = '<i class="fas fa-volume-high"></i>';
+        volumeSlider.value = lastVolume;
+        player.setVolume(lastVolume);
+      } else {
+        lastVolume = volumeSlider.value;
+        player.mute();
+        btn.innerHTML = '<i class="fas fa-volume-xmark"></i>';
+        volumeSlider.value = 0;
+      }
+    } catch (e) {
+      console.warn("Mute/unmute failed due to autoplay policy");
+    }
+
+    updateSliderFill(volumeSlider);
+  }
+
+  function handleVolume(e) {
+    const newVolume = parseInt(e.target.value);
+    lastVolume = newVolume;
+
+    try {
+      if (newVolume === 0) {
+        player.mute();
+        document.getElementById("muteBtn").innerHTML =
+          '<i class="fas fa-volume-xmark"></i>';
+      } else {
+        player.unMute();
+        player.setVolume(newVolume);
+        document.getElementById("muteBtn").innerHTML =
+          '<i class="fas fa-volume-high"></i>';
+      }
+    } catch (e) {
+      console.warn("Volume change blocked");
+    }
+
+    updateSliderFill(volumeSlider);
+  }
+
+  function handleSeek(e) {
+    player.seekTo((e.target.value / 100) * duration, true);
+    updateSliderFill(seekBar);
+  }
+
+  function handleSpeedChange(e) {
+    player.setPlaybackRate(parseFloat(e.target.value));
+  }
+
+  function toggleFullscreen() {
+    const elem = document.querySelector(".player-card");
+    const btn = document.getElementById("fullscreenBtn");
+
+    if (!document.fullscreenElement) {
+      elem.requestFullscreen().then(() => {
+        btn.innerHTML = '<i class="fas fa-compress"></i>';
+      });
+    } else {
+      document.exitFullscreen().then(() => {
+        btn.innerHTML = '<i class="fas fa-expand"></i>';
+      });
+    }
+  }
+
+  function updateProgress() {
+    const current = player.getCurrentTime();
+    document.getElementById("currentTime").textContent = formatTime(current);
+    seekBar.value = (current / duration) * 100;
+    updateSliderFill(seekBar);
+  }
+
+  function updateSliderFill(slider) {
+    const percentage =
+      ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+    slider.style.background = `linear-gradient(to right, #ffffff ${
+      percentage ? percentage : 0
+    }%, rgba(255, 255, 255, 0.1) ${percentage ? percentage : 0}%)`;
+  }
+
+  function onPlayerStateChange(event) {
+    const playPauseBtn = document.getElementById("playPauseBtn");
+    const overlayPlay = document.getElementById("overlayPlay");
+
+    if (event.data === YT.PlayerState.PLAYING) {
+      playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+      overlayPlay.style.opacity = "0";
+    } else if (event.data === YT.PlayerState.PAUSED) {
+      playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+      overlayPlay.style.opacity = "1";
+    }
+  }
+
+  function formatTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60)
+      .toString()
+      .padStart(2, "0");
+    return `${m}:${s}`;
+  }
+});
+
 </script>
-
 </body>
 </html>
